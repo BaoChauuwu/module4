@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class CaculateController {
-    @GetMapping()
+    @GetMapping("/")
     public String showForm() {
         return "index";
     }
@@ -31,9 +31,11 @@ public class CaculateController {
                     break;
                 case "Division":
                     if (param2 == 0) {
-                        model.addAttribute("mess", "phép chia bị lỗi");
+                        model.addAttribute("mess", "Không thể chia cho 0!");
+                        model.addAttribute("result", "Error");
+                    } else {
+                        model.addAttribute("result", (double) param1 / param2);
                     }
-                    model.addAttribute("result", param1 / param2);
                     break;
                 default:
                     break;
