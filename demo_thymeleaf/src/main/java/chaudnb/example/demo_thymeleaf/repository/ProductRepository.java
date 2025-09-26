@@ -1,46 +1,74 @@
 package chaudnb.example.demo_thymeleaf.repository;
 
 import chaudnb.example.demo_thymeleaf.entity.Product;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 @Repository
 public class ProductRepository implements  IProductRepository {
-    private static List<Product> products = new ArrayList<>();
-    static {
-        products.add(new Product(1, "Áo phông", "Áo phông nam cổ tròn, màu trắng", 150000.0, 100));
-        products.add(new Product(2, "Quần jeans", "Quần jeans xanh, ống côn", 450000.0, 50));
-        products.add(new Product(3, "Giày thể thao", "Giày thể thao nam, màu đen", 800000.0, 75));
-        products.add(new Product(4, "Đồng hồ", "Đồng hồ đeo tay nữ, mặt tròn", 1200000.0, 30));
-        products.add(new Product(5, "Ba lô", "Ba lô du lịch đa năng, chống nước", 650000.0, 60));    }
+
+    @PersistenceContext
+    private EntityManager entityManager;
     @Override
     public List<Product> findAll() {
+
+        List<Product> products = new ArrayList<>();
+        TypedQuery<Product> query = entityManager.createQuery("from Product",Product.class);
+        products = query.getResultList();
         return products;
     }
-
+    @Transactional
     @Override
-    public Product addProduct(Product product) {
-        return null;
+    public boolean addProduct(Product product) {
+        try {
+            entityManager.persist(product);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
     }
 
+    @Transactional
     @Override
     public Product updateProduct(Product product) {
-        return null;
+        try {
+            return entityManager.merge(product);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
+    @Transactional
     @Override
     public boolean deleteProduct(Product product) {
-        return false;
+        try {
+            entityManager.remove(entityManager.merge(product));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public Product findProductById(int id) {
-        return null;
+        Product product = entityManager.find(Product.class,id);
+        return product;
     }
 
     @Override
     public List<Product> findProductByName(String name) {
-        return List.of();
+        try {
+            TypedQuery<Product> query = entityManager.createQuery(
+                "SELECT p FROM Product p WHERE p.name LIKE :name", Product.class);
+            query.setParameter("name", "%" + name + "%");
+            return query.getResultList();
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 }

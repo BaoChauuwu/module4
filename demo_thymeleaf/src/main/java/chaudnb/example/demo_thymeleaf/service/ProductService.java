@@ -17,26 +17,29 @@ public class ProductService implements IProductService{
 
     @Override
     public Product addProduct(Product product) {
+        if (productRepository.addProduct(product)) {
+            return product;
+        }
         return null;
     }
 
     @Override
     public Product updateProduct(Product product) {
-        return null;
+        return productRepository.updateProduct(product);
     }
 
     @Override
     public boolean deleteProduct(Product product) {
-        return false;
+        return productRepository.deleteProduct(product);
     }
 
     @Override
     public Product findProductById(int id) {
-        return null;
+        return productRepository.findProductById(id);
     }
 
     @Override
     public List<Product> findProductByName(String name) {
-        return List.of();
+        return productRepository.findProductByName(name);
     }
 }
