@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${blog.id} == null ? 'Create Blog' : 'Edit Blog'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        form { max-width: 600px; }
+        label { display:block; margin-top: 8px; }
+    </style>
+    </head>
+<body>
+<h1 th:text="${blog.id} == null ? 'Create Blog' : 'Edit Blog'"></h1>
+
+<form th:action="${action}" th:object="${blog}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <label>Title</label>
+    <input type="text" th:field="*{title}" required />
+
+    <label>Author</label>
+    <input type="text" th:field="*{author}" required />
+
+    <label>Content</label>
+    <textarea th:field="*{content}" rows="8" cols="60" required></textarea>
+
+    <div style="margin-top:12px;">
+        <button type="submit">Save</button>
+        <a th:href="@{/blogs}">Cancel</a>
+    </div>
+</form>
+
+</body>
+</html>
+
+
