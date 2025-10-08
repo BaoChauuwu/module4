@@ -8,24 +8,40 @@
 <body>
 <h1>Blog List</h1>
 
-<a th:href="@{/blogs/create}">Create New</a>
+<div style="margin-bottom:12px;">
+    <a th:href="@{/blogs/create}">Create New</a>
+    <a th:href="@{/categories}" style="margin-left:12px;">Manage Categories</a>
+    <form th:action="@{/blogs}" method="get" style="display:inline; margin-left:24px;">
+        <input type="text" name="q" placeholder="Search..." th:value="${q}" />
+        <select name="categoryId">
+            <option th:value="" th:selected="${categoryId==null}">All categories</option>
+            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${categoryId==c.id}"></option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+    <span th:if="${blogPage!=null}" style="margin-left:12px;" th:text="${'Total: ' + blogPage.totalElements}"></span>
+    </div>
 
 <table border="1" cellspacing="0" cellpadding="6">
     <thead>
     <tr>
         <th>ID</th>
         <th>Title</th>
+        <th>Category</th>
         <th>Author</th>
+        <th>Created</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="b : ${blogs}">
+    <tr th:each="b : ${blogPage}">
         <td th:text="${b.id}"></td>
         <td>
             <a th:href="@{|/blogs/${b.id}|}" th:text="${b.title}"></a>
         </td>
+        <td th:text="${b.category != null ? b.category.name : '—'}"></td>
         <td th:text="${b.author}"></td>
+        <td th:text="${#temporals.format(b.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
         <td>
             <a th:href="@{|/blogs/edit/${b.id}|}">Edit</a>
             <form th:action="@{|/blogs/delete/${b.id}|}" method="post" style="display:inline">
@@ -34,10 +50,18 @@
         </td>
     </tr>
     </tbody>
-    <tfoot th:if="${#lists.isEmpty(blogs)}">
+    <tfoot th:if="${blogPage==null or #lists.isEmpty(blogPage.content)}">
     <tr><td colspan="4">No data</td></tr>
     </tfoot>
     </table>
+
+<div th:if="${blogPage!=null}" style="margin-top:12px;">
+    <span th:text="${'Page ' + (blogPage.number + 1) + ' / ' + blogPage.totalPages}"></span>
+    <div>
+        <a th:if="${!blogPage.first}" th:href="@{|/blogs?page=${blogPage.number-1}&size=${blogPage.size}&q=${q}&categoryId=${categoryId}|}">Prev</a>
+        <a th:if="${!blogPage.last}" th:href="@{|/blogs?page=${blogPage.number+1}&size=${blogPage.size}&q=${q}&categoryId=${categoryId}|}" style="margin-left:8px;">Next</a>
+    </div>
+</div>
 
 </body>
 </html>
