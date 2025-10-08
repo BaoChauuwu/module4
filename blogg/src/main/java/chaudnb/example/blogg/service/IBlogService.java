@@ -1,6 +1,8 @@
 package chaudnb.example.blogg.service;
 
 import chaudnb.example.blogg.entity.Blog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IBlogService {
     Iterable<Blog> findAll();
@@ -8,4 +10,6 @@ public interface IBlogService {
     Blog findById(int id);
     boolean add(Blog blog);
     void deleteById(int id);
+
+    Page<Blog> search(String q, Integer categoryId, Pageable pageable);
 }
