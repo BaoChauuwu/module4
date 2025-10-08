@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${isEdit} ? 'Chỉnh sửa bài hát' : 'Thêm bài hát mới'">Thêm bài hát</title>
+</head>
+<body>
+    <nav>
+        <div>
+            <a href="/songs">Quản lý bài hát</a>
+            <div>
+                <a href="/songs">Danh sách bài hát</a>
+                <a href="/songs/add">Thêm bài hát</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div th:if="${successMessage}" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+        <h5 th:text="${isEdit} ? 'Chỉnh sửa bài hát' : 'Thêm bài hát mới'"></h5>
+
+        <form th:action="${isEdit} ? @{/songs/edit/{id}(id=${song.id})} : @{/songs/add}" 
+              th:object="${song}" 
+              method="post">
+            
+            <div>
+                <label for="title">Tên bài hát <span>*</span></label>
+                <input type="text" id="title" th:field="*{title}" placeholder="Nhập tên bài hát" maxlength="800" required>
+                <div><span id="title-counter">0</span>/800 ký tự</div>
+                <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                <div>Không được chứa các ký tự đặc biệt: @ ; , . = - +</div>
+            </div>
+
+            <div>
+                <label for="artist">Nghệ sĩ thể hiện <span>*</span></label>
+                <input type="text" id="artist" th:field="*{artist}" placeholder="Nhập tên nghệ sĩ" maxlength="300" required>
+                <div><span id="artist-counter">0</span>/300 ký tự</div>
+                <div th:if="${#fields.hasErrors('artist')}" th:errors="*{artist}"></div>
+                <div>Không được chứa các ký tự đặc biệt: @ ; , . = - +</div>
+            </div>
+
+            <div>
+                <label for="genre">Thể loại nhạc <span>*</span></label>
+                <textarea id="genre" th:field="*{genre}" placeholder="Nhập thể loại nhạc (ví dụ: Pop, Rock, Jazz)" maxlength="1000" rows="3" required></textarea>
+                <div><span id="genre-counter">0</span>/1000 ký tự</div>
+                <div th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}"></div>
+                <div>Chỉ được chứa dấu phẩy (,), không được chứa các ký tự đặc biệt khác: @ ; . = - +</div>
+            </div>
+
+            <div>
+                <a href="/songs">Quay lại</a>
+                <button type="submit" th:text="${isEdit} ? 'Cập nhật' : 'Thêm mới'"></button>
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <div>
+            <p>&copy; 2024 Ứng dụng quản lý bài hát. Phát triển bởi CodeGym.</p>
+        </div>
+    </footer>
+    <script>
+        function setupCharCounter(inputId, counterId, maxLength) {
+            const input = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            
+            function updateCounter() {
+                const length = input.value.length;
+                counter.textContent = length;
+                counter.parentElement.className = 'char-counter';
+                if (length > maxLength * 0.8) {
+                    counter.parentElement.className += ' warning';
+                }
+                if (length > maxLength * 0.9) {
+                    counter.parentElement.className += ' danger';
+                }
+            }
+            
+            input.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+        
+        setupCharCounter('title', 'title-counter', 800);
+        setupCharCounter('artist', 'artist-counter', 300);
+        setupCharCounter('genre', 'genre-counter', 1000);
+    </script>
+</body>
+</html>
+
