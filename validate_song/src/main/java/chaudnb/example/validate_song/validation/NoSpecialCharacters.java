@@ -13,6 +13,4 @@ public @interface NoSpecialCharacters {
     String message() default "Không được chứa ký tự đặc biệt";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    String[] allowedChars() default {};
 }
-

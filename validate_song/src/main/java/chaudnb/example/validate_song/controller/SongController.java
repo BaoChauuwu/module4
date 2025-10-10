@@ -1,5 +1,6 @@
 package chaudnb.example.validate_song.controller;
 
+import chaudnb.example.validate_song.dto.SongDTO;
 import chaudnb.example.validate_song.entity.Song;
 import chaudnb.example.validate_song.service.SongService;
 import jakarta.validation.Valid;
@@ -28,13 +29,13 @@ public class SongController {
     
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("song", new Song());
+        model.addAttribute("song", new SongDTO());
         model.addAttribute("isEdit", false);
         return "songs/form";
     }
     
     @PostMapping("/add")
-    public String addSong(@Valid @ModelAttribute("song") Song song, 
+    public String addSong(@Valid @ModelAttribute("song") SongDTO songDTO, 
                          BindingResult bindingResult, 
                          Model model,
                          RedirectAttributes redirectAttributes) {
@@ -45,6 +46,10 @@ public class SongController {
         }
         
         try {
+            Song song = new Song();
+            song.setTitle(songDTO.getTitle());
+            song.setArtist(songDTO.getArtist());
+            song.setGenre(songDTO.getGenre());
             songService.saveSong(song);
             redirectAttributes.addFlashAttribute("successMessage", "Thêm bài hát thành công!");
             return "redirect:/songs";
@@ -60,7 +65,12 @@ public class SongController {
         try {
             Song song = songService.getSongById(id)
                     .orElseThrow(() -> new RuntimeException("Không tìm thấy bài hát"));
-            model.addAttribute("song", song);
+            SongDTO songDTO = new SongDTO();
+            songDTO.setId(song.getId());
+            songDTO.setTitle(song.getTitle());
+            songDTO.setArtist(song.getArtist());
+            songDTO.setGenre(song.getGenre());
+            model.addAttribute("song", songDTO);
             model.addAttribute("isEdit", true);
             return "songs/form";
         } catch (Exception e) {
@@ -70,7 +80,7 @@ public class SongController {
     
     @PostMapping("/edit/{id}")
     public String updateSong(@PathVariable Long id,
-                           @Valid @ModelAttribute("song") Song song,
+                           @Valid @ModelAttribute("song") SongDTO songDTO,
                            BindingResult bindingResult,
                            Model model,
                            RedirectAttributes redirectAttributes) {
@@ -81,6 +91,11 @@ public class SongController {
         }
         
         try {
+            Song song = new Song();
+            song.setId(id);
+            song.setTitle(songDTO.getTitle());
+            song.setArtist(songDTO.getArtist());
+            song.setGenre(songDTO.getGenre());
             songService.updateSong(id, song);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật bài hát thành công!");
             return "redirect:/songs";
