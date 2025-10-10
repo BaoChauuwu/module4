@@ -3,7 +3,7 @@ package chaudnb.example.validate_song.controller;
 import chaudnb.example.validate_song.dto.SongDTO;
 import chaudnb.example.validate_song.entity.Song;
 import chaudnb.example.validate_song.service.SongService;
-import jakarta.validation.Valid;
+import chaudnb.example.validate_song.validation.SongValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +19,7 @@ import java.util.List;
 public class SongController {
     
     private final SongService songService;
+    private final SongValidator songValidator;
     
     @GetMapping
     public String getAllSongs(Model model) {
@@ -35,10 +36,12 @@ public class SongController {
     }
     
     @PostMapping("/add")
-    public String addSong(@Valid @ModelAttribute("song") SongDTO songDTO, 
+    public String addSong(@ModelAttribute("song") SongDTO songDTO, 
                          BindingResult bindingResult, 
                          Model model,
                          RedirectAttributes redirectAttributes) {
+        
+        songValidator.validate(songDTO, bindingResult);
         
         if (bindingResult.hasErrors()) {
             model.addAttribute("isEdit", false);
@@ -80,10 +83,12 @@ public class SongController {
     
     @PostMapping("/edit/{id}")
     public String updateSong(@PathVariable Long id,
-                           @Valid @ModelAttribute("song") SongDTO songDTO,
+                           @ModelAttribute("song") SongDTO songDTO,
                            BindingResult bindingResult,
                            Model model,
                            RedirectAttributes redirectAttributes) {
+        
+        songValidator.validate(songDTO, bindingResult);
         
         if (bindingResult.hasErrors()) {
             model.addAttribute("isEdit", true);
