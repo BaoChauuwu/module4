@@ -1,9 +1,11 @@
 package chaudnb.example.validate_song.validation;
 
 import chaudnb.example.validate_song.dto.SongDTO;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+@Component
 public class SongValidator implements Validator {
     
     @Override
