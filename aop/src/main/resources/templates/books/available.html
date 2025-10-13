@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Available Books</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1><i class="fas fa-check-circle text-success"></i> Available Books</h1>
+                <p class="text-muted">Books that are currently available for borrowing</p>
+            </div>
+        </div>
+
+        <!-- Available Books Grid -->
+        <div class="row" th:if="${books != null and !books.empty}">
+            <div class="col-md-4 mb-4" th:each="book : ${books}">
+                <div class="card h-100">
+                    <div class="book-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${book.title}">Book Title</h5>
+                        <p class="card-text">
+                            <strong>Author:</strong> <span th:text="${book.author}">Author Name</span><br>
+                            <strong>ISBN:</strong> <span th:text="${book.isbn}">ISBN</span><br>
+                            <strong>Available:</strong> 
+                            <span class="badge available-badge" th:text="${book.availableQuantity}">Available</span>
+                            <span class="text-muted">/ <span th:text="${book.totalQuantity}">Total</span></span>
+                        </p>
+                        <div class="card-text" th:if="${book.description}" 
+                             th:text="${#strings.abbreviate(book.description, 100)}">Description</div>
+                    </div>
+                    <div class="card-footer">
+                        <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-success w-100">
+                            <i class="fas fa-hand-holding"></i> Borrow Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Available Books -->
+        <div class="text-center py-5" th:if="${books == null or books.empty}">
+            <i class="fas fa-book-dead fa-3x text-muted mb-3"></i>
+            <h3 class="text-muted">No books available</h3>
+            <p class="text-muted">All books are currently borrowed. Check back later!</p>
+            <a href="/books" class="btn btn-primary">
+                <i class="fas fa-list"></i> View All Books
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+

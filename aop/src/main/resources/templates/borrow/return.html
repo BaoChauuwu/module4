@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Return Book</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h2><i class="fas fa-undo"></i> Return Book</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Please enter your borrow code to return the book.</p>
+                        
+                        <form th:action="@{/borrow/return}" method="post">
+                            <div class="mb-3">
+                                <label for="borrowCode" class="form-label">Borrow Code *</label>
+                                <input type="text" class="form-control" id="borrowCode" name="borrowCode" 
+                                       placeholder="Enter your 5-digit borrow code" 
+                                       pattern="[0-9]{5}" maxlength="5" required>
+                                <div class="form-text">Enter the 5-digit code you received when borrowing the book.</div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-check-circle"></i> Return Book
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="/books" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Books
+                    </a>
+                    <a href="/borrow/records" class="btn btn-info ms-2">
+                        <i class="fas fa-history"></i> View Borrow Records
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

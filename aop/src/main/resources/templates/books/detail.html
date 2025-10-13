@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title th:text="${book.title} + ' - Book Details'">Book Details</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="book-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="card-body text-center">
+                        <h4 th:text="${book.title}">Book Title</h4>
+                        <p class="text-muted" th:text="${book.author}">Author</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-info-circle"></i> Book Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="150">Title:</th>
+                                <td th:text="${book.title}">Book Title</td>
+                            </tr>
+                            <tr>
+                                <th>Author:</th>
+                                <td th:text="${book.author}">Author Name</td>
+                            </tr>
+                            <tr>
+                                <th>ISBN:</th>
+                                <td th:text="${book.isbn}">ISBN</td>
+                            </tr>
+                            <tr>
+                                <th>Available:</th>
+                                <td>
+                                    <span th:if="${book.availableQuantity > 0}" 
+                                          class="badge available-badge fs-6" 
+                                          th:text="${book.availableQuantity}">Available</span>
+                                    <span th:if="${book.availableQuantity == 0}" 
+                                          class="badge unavailable-badge fs-6">Out of Stock</span>
+                                    <span class="text-muted">/ <span th:text="${book.totalQuantity}">Total</span></span>
+                                </td>
+                            </tr>
+                            <tr th:if="${book.description}">
+                                <th>Description:</th>
+                                <td th:text="${book.description}">Description</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Borrow Form -->
+                <div class="card mt-4" th:if="${book.availableQuantity > 0}">
+                    <div class="card-header bg-success text-white">
+                        <h4><i class="fas fa-hand-holding"></i> Borrow This Book</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/borrow/{id}(id=${book.id})}" method="post">
+                            <div class="mb-3">
+                                <label for="borrowerName" class="form-label">Your Name:</label>
+                                <input type="text" class="form-control" id="borrowerName" name="borrowerName" 
+                                       placeholder="Enter your full name" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-book"></i> Borrow Book
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Out of Stock Message -->
+                <div class="card mt-4" th:if="${book.availableQuantity == 0}">
+                    <div class="card-header bg-danger text-white">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Out of Stock</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">Sorry, this book is currently not available for borrowing. Please check back later.</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4">
+                    <a href="/books" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Books
+                    </a>
+                    <a href="/books/available" class="btn btn-info ms-2">
+                        <i class="fas fa-check-circle"></i> View Available Books
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
