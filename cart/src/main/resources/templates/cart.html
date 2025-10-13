@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Giỏ hàng</title>
+</head>
+<body>
+    <h1>Giỏ hàng</h1>
+    <p><a href="/">Trang chủ</a></p>
+    
+    <div th:if="${cart.countItemQuantity() > 0}">
+        <div th:each="entry : ${cart.products}">
+            <h3 th:text="${entry.key.name}">Tên sản phẩm</h3>
+            <p th:text="${entry.key.description}">Mô tả</p>
+            <p><strong th:text="${entry.key.price} + ' VND'">0 VND</strong></p>
+            
+            <form th:action="@{/cart/update/{id}(id=${entry.key.id})}" method="post" style="display:inline;">
+                <label>Số lượng:</label>
+                <input type="number" name="quantity" th:value="${entry.value}" min="1" max="100" onchange="this.form.submit()">
+            </form>
+            
+            <p><strong>Thành tiền: <span th:text="${entry.key.price * entry.value} + ' VND'">0 VND</span></strong></p>
+            
+            <form th:action="@{/cart/remove/{id}(id=${entry.key.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Xóa sản phẩm này?')">Xóa</button>
+            </form>
+            
+            <hr>
+        </div>
+        
+        <h3>Tóm tắt:</h3>
+        <p>Tổng số lượng: <span th:text="${cart.countProductQuantity()}">0</span></p>
+        <p>Số loại sản phẩm: <span th:text="${cart.countItemQuantity()}">0</span></p>
+        <p><strong>Tổng tiền: <span th:text="${cart.countTotalPayment()} + ' VND'">0 VND</span></strong></p>
+        
+        <p>
+            <a href="/">Tiếp tục mua sắm</a> |
+            <form th:action="@{/cart/clear}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('Xóa tất cả sản phẩm?')">Xóa tất cả</button>
+            </form>
+        </p>
+    </div>
+    
+    <div th:if="${cart.countItemQuantity() == 0}">
+        <h3>Giỏ hàng trống</h3>
+        <p>Bạn chưa có sản phẩm nào trong giỏ hàng.</p>
+        <p><a href="/">Bắt đầu mua sắm</a></p>
+    </div>
+</body>
+</html>
