@@ -1,6 +1,6 @@
 package chaudnb.example.validate_form.controller;
 
-import chaudnb.example.validate_form.entity.User;
+import chaudnb.example.validate_form.dto.UserDTO;
 import chaudnb.example.validate_form.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,12 @@ public class FormController {
 
     @GetMapping("/")
     public String showForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("user", new UserDTO());
         return "index";
     }
 
     @PostMapping("/submit")
-    public String submitForm(@Valid User user, BindingResult bindingResult, Model model) {
+    public String submitForm(@Valid UserDTO user, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "index";
         }
