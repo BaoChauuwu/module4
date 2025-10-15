@@ -14,7 +14,7 @@
     <form th:action="@{/blogs}" method="get" style="display:inline; margin-left:24px;">
         <input type="text" name="q" placeholder="Search..." th:value="${q}" />
         <select name="categoryId">
-            <option th:value="" th:selected="${categoryId==null}">All categories</option>
+            <option value="" th:selected="${categoryId==null}">All categories</option>
             <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}" th:selected="${categoryId==c.id}"></option>
         </select>
         <button type="submit">Filter</button>
@@ -41,7 +41,7 @@
         </td>
         <td th:text="${b.category != null ? b.category.name : '—'}"></td>
         <td th:text="${b.author}"></td>
-        <td th:text="${#temporals.format(b.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${b.createdAt}"></td>
         <td>
             <a th:href="@{|/blogs/edit/${b.id}|}">Edit</a>
             <form th:action="@{|/blogs/delete/${b.id}|}" method="post" style="display:inline">
@@ -51,7 +51,7 @@
     </tr>
     </tbody>
     <tfoot th:if="${blogPage==null or #lists.isEmpty(blogPage.content)}">
-    <tr><td colspan="4">No data</td></tr>
+    <tr><td colspan="6">No data</td></tr>
     </tfoot>
     </table>
 

@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1 th:text="${product.name}">Tên sản phẩm</h1>
-    <p><a href="/">Trang chủ</a> | <a href="/cart">Giỏ hàng</a></p>
+    <p><a href="/products/shop">Trang chủ</a> | <a href="/cart">Giỏ hàng</a> <span th:if="${cartItemCount > 0}">(<span th:text="${cartItemCount}">0</span> sản phẩm)</span></p>
     
     <h3>Mô tả:</h3>
     <p th:text="${product.description}">Mô tả sản phẩm</p>
@@ -15,10 +15,15 @@
     <p><strong th:text="${product.price} + ' VND'">0 VND</strong></p>
     
     <h3>Thêm vào giỏ hàng:</h3>
-    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+    <form th:action="@{/products/detail/{id}/add(id=${product.id})}" method="post">
         <label>Số lượng:</label>
         <input type="number" name="quantity" value="1" min="1" max="100">
         <button type="submit">Thêm vào giỏ</button>
     </form>
+    
+    <p>
+        <a th:href="@{/products/add/{id}(id=${product.id})}">Thêm 1 vào giỏ</a> |
+        <a th:href="@{/products/add/{id}(id=${product.id}, action='show')}">Thêm và xem giỏ</a>
+    </p>
 </body>
 </html>

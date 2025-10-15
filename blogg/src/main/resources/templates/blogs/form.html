@@ -24,9 +24,9 @@
     <textarea th:field="*{content}" rows="8" cols="60" required></textarea>
 
     <label>Category</label>
-    <select th:field="*{category}">
-        <option th:value="">-- Select category --</option>
-        <option th:each="c : ${categories}" th:value="${c}" th:text="${c.name}"></option>
+    <select th:field="*{category.id}">
+        <option value="">-- Select category --</option>
+        <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
     </select>
 
     <div style="margin-top:12px;">
