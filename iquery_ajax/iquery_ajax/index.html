@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog AJAX Demo</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <div>
+        <h3>Tìm kiếm bài viết</h3>
+        <input type="text" id="searchInput" placeholder="Nhập từ khóa tìm kiếm...">
+        <button id="searchBtn">Tìm kiếm</button>
+        <button id="clearBtn">Xóa bộ lọc</button>
+    </div>
+
+    <div id="resultInfo">
+        <span id="totalCount">Tổng số: 0 bài viết</span>
+    </div>
+
+    <table id="blogTable">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>ID</th>
+                <th>Tiêu đề</th>
+                <th>Danh mục</th>
+                <th>Tác giả</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="blogTableBody">
+        </tbody>
+    </table>
+
+    <div id="loadMoreContainer" style="display: none;">
+        <button id="loadMoreBtn">Tải thêm</button>
+        <div id="loadMoreInfo"></div>
+    </div>
+
+    <div id="errorMessage" style="display: none;"></div>
+
+    <script>
+        let page = 0;
+        let searchText = '';
+
+        $(document).ready(function() {
+            loadBlogs();
+            
+            $('#searchBtn').click(search);
+            $('#clearBtn').click(clear);
+            $('#loadMoreBtn').click(loadMore);
+            $('#searchInput').keypress(function(e) {
+                if (e.which === 13) search();
+            });
+        });
+
+        function search() {
+            searchText = $('#searchInput').val();
+            page = 0;
+            $('#blogTableBody').empty();
+            $('#loadMoreContainer').hide();
+            loadBlogs();
+        }
+
+        function clear() {
+            $('#searchInput').val('');
+            search();
+        }
+
+        function loadBlogs() {
+            $.ajax({
+                url: 'http://localhost:8080/blogs/search',
+                data: { q: searchText, page: page, size: 10 },
+                success: function(response) {
+                    showBlogs(response.content);
+                    showTotal(response.totalElements);
+                    showLoadMore(response);
+                },
+                error: function() {
+                    alert('Lỗi tải dữ liệu');
+                }
+            });
+        }
+
+        function loadMore() {
+            page++;
+            $.ajax({
+                url: 'http://localhost:8080/blogs/search',
+                data: { q: searchText, page: page, size: 10 },
+                success: function(response) {
+                    addBlogs(response.content);
+                    showLoadMore(response);
+                }
+            });
+        }
+
+        function showBlogs(blogs) {
+            $('#blogTableBody').empty();
+            addBlogs(blogs);
+        }
+
+        function addBlogs(blogs) {
+            if (blogs.length === 0) {
+                $('#blogTableBody').append('<tr><td colspan="7">Không có dữ liệu</td></tr>');
+                return;
+            }
+            
+            blogs.forEach(function(blog, index) {
+                const row = '<tr>' +
+                    '<td>' + (page * 10 + index + 1) + '</td>' +
+                    '<td>' + blog.id + '</td>' +
+                    '<td><a href="http://localhost:8080/blogs/' + blog.id + '" target="_blank">' + blog.title + '</a></td>' +
+                    '<td>' + (blog.category ? blog.category.name : '—') + '</td>' +
+                    '<td>' + blog.author + '</td>' +
+                    '<td>' + formatDate(blog.createdAt) + '</td>' +
+                    '<td><a href="#" onclick="deleteBlog(' + blog.id + ')">Xóa</a></td>' +
+                '</tr>';
+                $('#blogTableBody').append(row);
+            });
+        }
+
+        function showTotal(total) {
+            $('#totalCount').text('Tổng số: ' + total + ' bài viết');
+        }
+
+        function showLoadMore(response) {
+            if (response.last) {
+                $('#loadMoreContainer').hide();
+            } else {
+                $('#loadMoreContainer').show();
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '—';
+            return new Date(dateString).toLocaleDateString('vi-VN');
+        }
+
+        function deleteBlog(id) {
+            if (confirm('Xóa bài viết này?')) {
+                $.ajax({
+                    url: 'http://localhost:8080/blogs/delete/' + id + '/ajax',
+                    method: 'POST',
+                    success: function() {
+                        alert('Xóa thành công');
+                        loadBlogs();
+                    },
+                    error: function() {
+                        alert('Lỗi xóa');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
